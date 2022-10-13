@@ -17,14 +17,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import cn.edu.jnu.text6.R;
+import cn.edu.jnu.text6.data.ShopItem;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int MENU_ID_ADD = 1;
     public static final int MENU_ID_UPDATE = 2;
     public static final int MENU_ID_DELETE = 3;
-    private ArrayList<String> mainStringSet;
+    private ArrayList<ShopItem> shopItems;
+    private MainRecycleViewAdapter mainRecycleViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +38,14 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewMain.setLayoutManager(linearLayoutManager);
 
-        mainStringSet = new ArrayList<>();
-        for(int i = 0 ; i < 100 ; i++)
+        shopItems = new ArrayList<>();
+        for(int i = 0 ; i < 10 ; i++)
         {
-            mainStringSet.add("item" + i);
+            shopItems.add(new ShopItem("item" + i , Math.random() *10 ,
+                    i % 2 == 1?R.drawable.zr : R.drawable.westbrook));
         }
-        MainRecycleViewMain mainRecycleViewMain = new MainRecycleViewMain(mainStringSet);
-        recyclerViewMain.setAdapter(mainRecycleViewMain);
+        mainRecycleViewAdapter = new MainRecycleViewAdapter(shopItems);
+        recyclerViewMain.setAdapter(mainRecycleViewAdapter);
     }
 
     @Override
@@ -51,25 +53,32 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case MENU_ID_ADD :
-                Toast.makeText(this,"item add" + item.getOrder() + " clicked" , Toast.LENGTH_LONG)
-                        .show();
+                //Toast.makeText(this,"item add" + item.getOrder() + " clicked" , Toast.LENGTH_LONG)
+                //       .show();
+                shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 ,
+                        R.drawable.number_six));
+                mainRecycleViewAdapter.notifyItemInserted(item.getOrder());
                 break;
             case MENU_ID_UPDATE:
-                Toast.makeText(this,"item update" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
-                        .show();
+                //Toast.makeText(this,"item update" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
+                //        .show();
+                shopItems.get(item.getOrder()).setTitle("updated 6");
+                mainRecycleViewAdapter.notifyItemChanged(item.getOrder());
                 break;
             case MENU_ID_DELETE:
-                Toast.makeText(this,"item delete" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
-                        .show();
+                //Toast.makeText(this,"item delete" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
+                //        .show();
+                shopItems.remove(item.getOrder());
+                mainRecycleViewAdapter.notifyItemRemoved(item.getOrder());
                 break;
 
         }
         return super.onContextItemSelected(item);
     }
 
-    public class MainRecycleViewMain extends RecyclerView.Adapter<MainRecycleViewMain.ViewHolder>{
+    public class MainRecycleViewAdapter extends RecyclerView.Adapter<MainRecycleViewAdapter.ViewHolder>{
 
-        private ArrayList<String> localDataSet;
+        private ArrayList<ShopItem> localDataSet;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
             private final TextView textView;
@@ -102,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        public MainRecycleViewMain(ArrayList<String> dataset) {
+        public MainRecycleViewAdapter(ArrayList<ShopItem> dataset) {
             localDataSet = dataset;
         }
 
@@ -116,10 +125,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MainRecycleViewMain.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull MainRecycleViewAdapter.ViewHolder holder, int position) {
             //Get element from your dataset at this position and replace the
             //contents of the view with that element
-            holder.getTextView().setText(localDataSet.get(position));
+            holder.getTextView().setText(localDataSet.get(position).getTitle());
             holder.getImageViewImage().setImageResource(position % 2 == 1 ? R.drawable.zr : R.drawable.westbrook);
         }
 
