@@ -1,10 +1,12 @@
 package cn.edu.jnu.text6;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -13,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewMain.setLayoutManager(linearLayoutManager);
 
         shopItems = new ArrayList<>();
-        for(int i = 0 ; i < 10 ; i++)
+        for(int i = 0 ; i < 20 ; i++)
         {
             shopItems.add(new ShopItem("item" + i , Math.random() *10 ,
                     i % 2 == 1?R.drawable.zr : R.drawable.westbrook));
@@ -55,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
             case MENU_ID_ADD :
                 //Toast.makeText(this,"item add" + item.getOrder() + " clicked" , Toast.LENGTH_LONG)
                 //       .show();
-                shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 ,
-                        R.drawable.number_six));
+                shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
                 mainRecycleViewAdapter.notifyItemInserted(item.getOrder());
                 break;
             case MENU_ID_UPDATE:
@@ -68,8 +68,17 @@ public class MainActivity extends AppCompatActivity {
             case MENU_ID_DELETE:
                 //Toast.makeText(this,"item delete" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
                 //        .show();
-                shopItems.remove(item.getOrder());
-                mainRecycleViewAdapter.notifyItemRemoved(item.getOrder());
+                AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .setTitle(R.string.confirmation)
+                        .setMessage(R.string.ask)
+                        .setNegativeButton(R.string.no, (dialogInterface, i) -> {
+
+                        })
+                        .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
+                            shopItems.remove(item.getOrder());
+                            mainRecycleViewAdapter.notifyItemRemoved(item.getOrder());
+                        }).create();
+                alertDialog.show();
                 break;
 
         }
@@ -81,20 +90,27 @@ public class MainActivity extends AppCompatActivity {
         private ArrayList<ShopItem> localDataSet;
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
-            private final TextView textView;
+            private final TextView textViewTitle;
+            private final TextView textViewPrice;
             private final ImageView imageViewImage;
+
+            public TextView getTextViewPrice() {
+                return textViewPrice;
+            }
+
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
 
                 imageViewImage = itemView.findViewById(R.id.imageview_item_image);
-                textView =itemView.findViewById(R.id.textview_item_caption);
+                textViewTitle =itemView.findViewById(R.id.textview_item_caption);
+                textViewPrice = itemView.findViewById(R.id.textview_item_price);
 
                 itemView.setOnCreateContextMenuListener(this);
             }
 
-            public TextView getTextView(){
-                return textView;
+            public TextView getTextViewTitle(){
+                return textViewTitle;
             }
 
             public ImageView getImageViewImage() {
@@ -125,11 +141,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MainRecycleViewAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
             //Get element from your dataset at this position and replace the
             //contents of the view with that element
-            holder.getTextView().setText(localDataSet.get(position).getTitle());
-            holder.getImageViewImage().setImageResource(position % 2 == 1 ? R.drawable.zr : R.drawable.westbrook);
+            holder.getTextViewTitle().setText(localDataSet.get(position).getTitle());
+            holder.getTextViewPrice().setText(String.valueOf(localDataSet.get(position).getPrice()));
+            holder.getImageViewImage().setImageResource(localDataSet.get(position).getResourceId());
         }
 
         @Override

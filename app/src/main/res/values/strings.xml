@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">text6</string>
+    <string name="confirmation">Confirmation</string>
+    <string name="ask">Are you sure to delete this item?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
