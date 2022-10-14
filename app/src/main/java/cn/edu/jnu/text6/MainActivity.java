@@ -1,12 +1,14 @@
 package cn.edu.jnu.text6;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -27,6 +30,24 @@ public class MainActivity extends AppCompatActivity {
     public static final int MENU_ID_DELETE = 3;
     private ArrayList<ShopItem> shopItems;
     private MainRecycleViewAdapter mainRecycleViewAdapter;
+
+    private ActivityResultLauncher<Intent> addDataLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult()
+            ,result -> {
+        if(result != null)
+        {
+            Intent intent = result.getData();
+            if(result.getResultCode() == InputShopItemActivity.RESULT_CODE_SUCCESS)
+            {
+                Bundle bundle = intent.getExtras();
+                String title = bundle.getString("title");
+                double price = bundle.getDouble("price");
+                shopItems.add(1,new ShopItem("title", price , R.drawable.xjzr));
+                mainRecycleViewAdapter.notifyItemInserted(1);
+            }
+            //shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
+            //shopItems.add(1,new ShopItem("added", Math.random() *10 , R.drawable.xjzr));
+        }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
             case MENU_ID_ADD :
                 //Toast.makeText(this,"item add" + item.getOrder() + " clicked" , Toast.LENGTH_LONG)
                 //       .show();
-                shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
-                mainRecycleViewAdapter.notifyItemInserted(item.getOrder());
+                Intent intent = new Intent(this, InputShopItemActivity.class);
+                addDataLauncher.launch(intent);
+
                 break;
             case MENU_ID_UPDATE:
                 //Toast.makeText(this,"item update" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
