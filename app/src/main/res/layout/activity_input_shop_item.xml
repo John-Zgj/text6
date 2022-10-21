@@ -19,7 +19,7 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/str_title"
                 tools:layout_editor_absoluteX="85dp"
                 tools:layout_editor_absoluteY="235dp" />
 
@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Name"
+                android:text="@string/str_name"
                 tools:layout_editor_absoluteX="175dp"
                 tools:layout_editor_absoluteY="222dp" />
         </LinearLayout>
@@ -42,7 +42,7 @@
                 android:id="@+id/textViewPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/str_price"
                 tools:layout_editor_absoluteX="85dp"
                 tools:layout_editor_absoluteY="235dp" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Name"
+                android:text="1"
                 tools:layout_editor_absoluteX="175dp"
                 tools:layout_editor_absoluteY="222dp" />
         </LinearLayout>

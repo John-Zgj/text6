@@ -4,4 +4,7 @@
     <string name="ask">Are you sure to delete this item?</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="str_price">Price</string>
+    <string name="str_title">Title</string>
+    <string name="str_name">Name</string>
 </resources>

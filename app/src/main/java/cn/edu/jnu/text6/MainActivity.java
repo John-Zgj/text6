@@ -41,12 +41,34 @@ public class MainActivity extends AppCompatActivity {
                 Bundle bundle = intent.getExtras();
                 String title = bundle.getString("title");
                 double price = bundle.getDouble("price");
-                shopItems.add(1,new ShopItem("title", price , R.drawable.xjzr));
-                mainRecycleViewAdapter.notifyItemInserted(1);
+                int position = bundle.getInt("position");
+                shopItems.add(position,new ShopItem(title, price , R.drawable.xjzr));
+                mainRecycleViewAdapter.notifyItemInserted(position);
             }
             //shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
             //shopItems.add(1,new ShopItem("added", Math.random() *10 , R.drawable.xjzr));
         }
+            });
+
+    private ActivityResultLauncher<Intent> updateDataLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult()
+            ,result -> {
+                if(result != null)
+                {
+                    Intent intent = result.getData();
+                    if(result.getResultCode() == InputShopItemActivity.RESULT_CODE_SUCCESS)
+                    {
+                        Bundle bundle = intent.getExtras();
+                        String title = bundle.getString("title");
+                        double price = bundle.getDouble("price");
+                        int position = bundle.getInt("position");
+                        shopItems.get(position).setTitle(title);
+                        shopItems.get(position).setPrice(price);
+                        //shopItems.add(position,new ShopItem(title, price , R.drawable.xjzr));
+                        mainRecycleViewAdapter.notifyItemChanged(position);
+                    }
+                    //shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
+                    //shopItems.add(1,new ShopItem("added", Math.random() *10 , R.drawable.xjzr));
+                }
             });
 
     @Override
@@ -78,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(this,"item add" + item.getOrder() + " clicked" , Toast.LENGTH_LONG)
                 //       .show();
                 Intent intent = new Intent(this, InputShopItemActivity.class);
+                intent.putExtra("position",item.getOrder());
                 addDataLauncher.launch(intent);
 
                 break;
@@ -86,6 +109,13 @@ public class MainActivity extends AppCompatActivity {
                 //        .show();
                 shopItems.get(item.getOrder()).setTitle("updated 6");
                 mainRecycleViewAdapter.notifyItemChanged(item.getOrder());
+
+                Intent intentUpdate = new Intent(this, InputShopItemActivity.class);
+                intentUpdate.putExtra("position",item.getOrder());
+                intentUpdate.putExtra("title",shopItems.get(item.getOrder()).getTitle());
+                intentUpdate.putExtra("price",shopItems.get(item.getOrder()).getPrice());
+                updateDataLauncher.launch(intentUpdate);
+
                 break;
             case MENU_ID_DELETE:
                 //Toast.makeText(this,"item delete" + item.getOrder() + "clicked" , Toast.LENGTH_LONG)
