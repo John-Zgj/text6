@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import cn.edu.jnu.text6.data.DataSaver;
 import cn.edu.jnu.text6.data.ShopItem;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,9 +45,8 @@ public class MainActivity extends AppCompatActivity {
                 int position = bundle.getInt("position");
                 shopItems.add(position,new ShopItem(title, price , R.drawable.xjzr));
                 mainRecycleViewAdapter.notifyItemInserted(position);
+                new DataSaver().Save(this,shopItems);
             }
-            //shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
-            //shopItems.add(1,new ShopItem("added", Math.random() *10 , R.drawable.xjzr));
         }
             });
 
@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
                         //shopItems.add(position,new ShopItem(title, price , R.drawable.xjzr));
                         mainRecycleViewAdapter.notifyItemChanged(position);
                     }
-                    //shopItems.add(item.getOrder(),new ShopItem("added" + item.getOrder() , Math.random() *10 , R.drawable.xjzr));
-                    //shopItems.add(1,new ShopItem("added", Math.random() *10 , R.drawable.xjzr));
                 }
             });
 
@@ -82,11 +80,12 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewMain.setLayoutManager(linearLayoutManager);
 
-        shopItems = new ArrayList<>();
-        for(int i = 0 ; i < 20 ; i++)
-        {
-            shopItems.add(new ShopItem("item" + i , Math.random() *10 ,
-                    i % 2 == 1?R.drawable.zr : R.drawable.westbrook));
+        int i = 0;
+        DataSaver dataSaver = new DataSaver();
+        shopItems = dataSaver.Load(this);
+
+        if(shopItems.size() == 0) {
+            shopItems.add(new ShopItem("item" + (i++), Math.random() * 10, i % 2 == 1 ? R.drawable.zr : R.drawable.westbrook));
         }
         mainRecycleViewAdapter = new MainRecycleViewAdapter(shopItems);
         recyclerViewMain.setAdapter(mainRecycleViewAdapter);
@@ -128,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         })
                         .setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                             shopItems.remove(item.getOrder());
+                            new DataSaver().Save(MainActivity.this,shopItems);
                             mainRecycleViewAdapter.notifyItemRemoved(item.getOrder());
                         }).create();
                 alertDialog.show();

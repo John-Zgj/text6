@@ -1,6 +1,8 @@
 package cn.edu.jnu.text6.data;
 
-public class ShopItem {
+import java.io.Serializable;
+
+public class ShopItem  implements Serializable {
     public ShopItem(String title, double price, int resourceId) {
         this.title = title;
         this.price = price;
